@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<!--
+  WARNING! Make sure that you match all Quasar related
+  tags to the same version! (Below it's "@2.6.6")
+-->
+
+<head>
+    <meta charset="utf-8">
+    <link href="./css/material.css" rel="stylesheet" type="text/css">
+    <link href="./css/all.css" rel="stylesheet" type="text/css">
+    <link href="./css/line-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="./css/bootstrap-icons.css" rel="stylesheet" type="text/css">
+    <link href="./css/animate.min.css" rel="stylesheet" type="text/css">
+    <link href="./css/quasar.prod.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<div id="q-app">
+    <div class="q-pa-md">
+        <q-layout>
+            <my-layout
+                    :layout-label="layoutLabel"
+                    :user="user"
+                    :issues="issues"
+                    :type-label="typeLabel"
+            />
+
+        </q-layout>
+
+    </div>
+</div>
+
+<!-- Add the following at the end of your body tag -->
+<script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+<script src="./js/quasar.umd.prod.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="layout.vue.js"></script>
+<script src="issuelist.vue.js"></script>
+<script src="issue.write.form.vue.js"></script>
+<script src="issue.edit.form.vue.js"></script>
+<script src="user.edit.form.vue.js"></script>
+
+<script>
+
+    const app = Vue.createApp({
+        setup() {
+            return {}
+        },
+        methods: {},
+        data() {
+            return {
+                layoutLabel: {
+                    userName: '맥그리거',
+                    userNameSuffix: ' 님',
+                    myInfo: '내정보',
+                    userEdit: '사용자 정보 수정',
+                    logout: '로그아웃',
+                    todo: '할일',
+                    inProgress: '진행중',
+                    resolved: '완료',
+                    publishIssue: '이슈등록',
+                },
+                typeLabel: {
+                    type: [
+                        'TASK',
+                        'BUG'
+                    ],
+                    TASK: '업무',
+                    BUG: '버그리포트',
+                    priority: {
+                        'LOW': '낮음',
+                        'MEDIUM': '보통',
+                        'HIGH': '높음',
+                    },
+                },
+                user: {
+                    id: 1,
+                    username: '조슈아',
+                    email: 'joshua@gmail.com',
+                    avatarUrl: 'https://cdn.quasar.dev/img/avatar.png',
+                    createdAt: '2022-01-01 02:22:33',
+                    updatedAt: '2022-01-01 02:22:33',
+                },
+                issues: [
+                    {
+                        id: 1,
+                        summary: '버그 수정 관련',
+                        description: '기능 개발을 위해 코틀린과 스프링을 학습한다',
+                        reporter: '조슈아',
+                        type: 'BUG',
+                        priority: 'HIGH',
+                        status: 'TODO',
+                        createdAt: '2022-05-01 11:20:11',
+                        updatedAt: '2022-05-01 11:20:11',
+                        comments: [
+                            {
+                                id: 1,
+                                body: '좋아보여요',
+                                userId: 2,
+                                username: '마틴 파울러',
+                                avatarUrl: 'https://cdn.quasar.dev/img/avatar.png',
+                                createdAt: '2022-05-03 20:20:11',
+                                updatedAt: '2022-05-03 20:20:11',
+                            },
+                            {
+                                id: 2,
+                                body: '감사합니다',
+                                userId: 1,
+                                username: '조슈아',
+                                avatarUrl: 'https://cdn.quasar.dev/img/avatar.png',
+                                createdAt: '2022-05-03 20:33:11',
+                                updatedAt: '2022-05-03 20:33:11',
+                            },
+                        ],
+                    },
+                    {
+                        id: 2,
+                        summary: '사용자 기능 개발',
+                        description: '사용자 기능 개발!!',
+                        reporter: '마틴',
+                        type: 'TASK',
+                        priority: 'MEDIUM',
+                        status: 'TODO',
+                        createdAt: '2022-05-01 11:20:11',
+                        updatedAt: '2022-05-01 11:20:11',
+                    },
+                    {
+                        id: 3,
+                        summary: '결제 기능 개발',
+                        description: '결제 기능 개발!!!',
+                        reporter: '파울러',
+                        type: 'TASK',
+                        priority: 'MEDIUM',
+                        status: 'TODO',
+                        createdAt: '2022-05-01 11:20:11',
+                        updatedAt: '2022-05-02 1:23:11',
+                    },
+                    {
+                        id: 4,
+                        summary: '코틀린 학습하기',
+                        description: '코틀린 학습 !',
+                        reporter: '켄트',
+                        type: 'TASK',
+                        priority: 'LOW',
+                        status: 'TODO',
+                        createdAt: '2022-05-01 11:20:11',
+                        updatedAt: '2022-05-01 11:20:11',
+                    }
+                ]
+            }
+        }
+    })
+
+    app.use(Quasar)
+    app.component("MyLayout", MyLayout);
+    app.component("IssueList", IssueList);
+    app.component("IssueWriteForm", IssueWriteForm);
+    app.component("IssueEditForm", IssueEditForm);
+    app.component("UserEditForm", UserEditForm);
+    app.mount('#q-app')
+
+
+</script>
+</body>
+</html>
