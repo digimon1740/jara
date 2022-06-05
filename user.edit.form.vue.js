@@ -6,9 +6,9 @@ const UserEditForm = {
         <q-form @sumit="onSubmit" action="http://localhost:8080/users/1" method="post" enctype="multipart/form-data">
             <q-card-section>
                 <div>
-                    <span class="text-h6">이메일</span>
+                    <span class="text-h6">이름</span>
                     <div>
-                      <q-input name="email" v-model="user.email" filled type="email" />
+                      <q-input name="username" v-model="user.username" filled type="text" />
                     </div>
                 </div>
             </q-card-section>
