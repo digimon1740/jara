@@ -73,6 +73,21 @@
                         'MEDIUM': '보통',
                         'HIGH': '높음',
                     },
+                    priorityOptions: [
+                        '낮음',
+                        '보통',
+                        '높음',
+                    ],
+                    status : {
+                        'TODO' : '할일',
+                        'IN_PROGRESS' : '진행중',
+                        'RESOLVED' : '완료',
+                    },
+                    statusOptions: [
+                        '할일',
+                        '진행중',
+                        '완료',
+                    ],
                 },
                 user: {
                     id: 1,
@@ -132,7 +147,7 @@
                         reporter: '파울러',
                         type: 'TASK',
                         priority: 'MEDIUM',
-                        status: 'TODO',
+                        status: 'RESOLVED',
                         createdAt: '2022-05-01 11:20:11',
                         updatedAt: '2022-05-02 1:23:11',
                     },
@@ -143,7 +158,7 @@
                         reporter: '켄트',
                         type: 'TASK',
                         priority: 'LOW',
-                        status: 'TODO',
+                        status: 'IN_PROGRESS',
                         createdAt: '2022-05-01 11:20:11',
                         updatedAt: '2022-05-01 11:20:11',
                     }

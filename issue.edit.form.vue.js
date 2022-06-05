@@ -18,7 +18,20 @@ const IssueEditForm = {
          <q-card-section>
             <div>
                 <span class="text-h6">우선순위</span>
-                <div>{{typeLabel.priority[issue.priority]}}</div>
+                <div>
+                  <q-select v-model="typeLabel.priority[issue.priority]"
+                   :options="typeLabel.priorityOptions" />
+                </div>
+            </div>
+        </q-card-section>
+        
+         <q-card-section>
+            <div>
+                <span class="text-h6">진행상태</span>
+                <div>
+                  <q-select v-model="typeLabel.status[issue.status]"
+                   :options="typeLabel.statusOptions" />
+                </div>
             </div>
         </q-card-section>
         
@@ -91,8 +104,9 @@ const IssueEditForm = {
         </q-card-section>
 
         <q-card-actions align="right" class="bg-white text-teal">
-          <q-btn flat label="저장" v-close-popup />
+          <q-btn flat @click="save()" label="저장" v-close-popup />
           <q-btn flat label="취소" v-close-popup />
+          <q-btn flat @click="remove()" label="삭제" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -105,11 +119,23 @@ const IssueEditForm = {
     data() {
         return {
             editCommentId: 0,
-            newComment : '',
+            newComment: '',
         }
     },
 
     methods: {
+        save() {
+            if (!confirm('변경 사항을 저장하시겠습니까?')) {
+                return
+            }
+            alert(this.$props.issue.id)
+        },
+        remove() {
+            if (!confirm('이슈를 삭제하시겠습니까?')) {
+                return
+            }
+            this.$props.issue.id
+        },
         editComment(id) {
             this.editCommentId = id
         },

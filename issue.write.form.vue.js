@@ -25,7 +25,7 @@ const IssueWriteForm = {
                 <span class="text-h6">우선순위</span>
                 <div>
                   <q-select v-model="issue.priority"
-                   :options="priorityOptions" />
+                   :options="typeLabel.priorityOptions" />
                 </div>
             </div>
         </q-card-section>
@@ -62,11 +62,6 @@ const IssueWriteForm = {
                 priority: '보통',
                 status : 'TODO',
             },
-            priorityOptions: [
-                '낮음',
-                '보통',
-                '높음',
-            ]
         }
     },
 
