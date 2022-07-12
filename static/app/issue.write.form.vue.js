@@ -43,7 +43,7 @@ const IssueWriteForm = {
 
 
         <q-card-actions align="right" class="bg-white text-teal">
-          <q-btn flat label="저장" v-close-popup />
+          <q-btn flat label="저장" @click="save()" v-close-popup />
           <q-btn flat label="취소" v-close-popup />
         </q-card-actions>
       </q-card>
@@ -56,15 +56,38 @@ const IssueWriteForm = {
     data() {
         return {
             issue: {
-                summary:'',
-                description:'',
+                summary: '',
+                description: '',
                 type: 'TASK',
-                priority: '보통',
-                status : 'TODO',
+                priority: 'MEDIUM',
+                status: 'TODO',
             },
         }
     },
 
     methods: {
+        save() {
+            let accessToken = localStorage.getItem('token')
+            window.axios.post(`/api/v1/issues`,
+                this.issue,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                }
+            ).then(response => {
+                if (!response.data) {
+                    alert('오류가 발생했습니다')
+                    return
+                }
+                if (response.data && response.data.code) {
+                    alert(response.data.message)
+                    return
+                }
+                this.issue = response.data
+
+                location.href = `/issueapp`
+            })
+        },
     }
 }

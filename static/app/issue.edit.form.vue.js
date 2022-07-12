@@ -10,7 +10,7 @@ const IssueEditForm = {
             <div>
                 <span class="text-h6">리포터</span>
                 <div>
-                    {{issue.reporter}}
+                    {{$props.reporter}}
                 </div>
             </div>
         </q-card-section>
@@ -19,7 +19,7 @@ const IssueEditForm = {
             <div>
                 <span class="text-h6">우선순위</span>
                 <div>
-                  <q-select v-model="typeLabel.priority[issue.priority]"
+                  <q-select v-model="issue.priority"
                    :options="typeLabel.priorityOptions" />
                 </div>
             </div>
@@ -29,7 +29,7 @@ const IssueEditForm = {
             <div>
                 <span class="text-h6">진행상태</span>
                 <div>
-                  <q-select v-model="typeLabel.status[issue.status]"
+                  <q-select v-model="issue.status"
                    :options="typeLabel.statusOptions" />
                 </div>
             </div>
@@ -64,7 +64,7 @@ const IssueEditForm = {
           <div >
               <span class="text-h6">댓글</span>
                 <q-input filled 
-                    @keyup.enter="createComment" 
+                    @keyup.enter="createComment($event)" 
                     v-model="newComment"    
                     label="댓글을 입력하세요" 
                 :dense="dense" />
@@ -81,7 +81,7 @@ const IssueEditForm = {
                     <q-item-section avatar style="width:100%">
                         <q-chip>
                             <q-avatar size="24px">
-                                <img :src="comment.avatarUrl">
+                                <img :src="comment.profileUrl">
                             </q-avatar>
                             {{comment.username}}
                         </q-chip>
@@ -90,11 +90,12 @@ const IssueEditForm = {
                             style="width:100%"
                             filled v-model="comment.body" :dense="dense" 
                             :readonly="editCommentId !== comment.id"
+                            @keyup.enter="editComment(comment)"
                         />
                         
                         <div>
-                            <span @click="editComment(comment.id)">수정</span> | 
-                            <span @click="deleteComment(comment.id)">삭제</span>
+                            <span @click="showEditComment(comment)">수정</span> | 
+                            <span @click="deleteComment(comment)">삭제</span>
                         </div>
                                     
                     </q-item-section>
@@ -114,6 +115,7 @@ const IssueEditForm = {
     props: [
         'user',
         'issue',
+        'reporter',
         'typeLabel'
     ],
     data() {
@@ -123,29 +125,98 @@ const IssueEditForm = {
         }
     },
 
+    mounted() {
+    },
+
     methods: {
         save() {
             if (!confirm('변경 사항을 저장하시겠습니까?')) {
                 return
             }
-            alert(this.$props.issue.id)
+            let accessToken = localStorage.getItem('token')
+            window.axios.put(`/api/v1/issues/${this.issue.id}`,
+                this.issue,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                }
+            ).then(response => {
+                if (!response.data) {
+                    alert('오류가 발생했습니다')
+                    return
+                }
+                if (response.data && response.data.code) {
+                    alert(response.data.message)
+                    return
+                }
+                this.issue = response.data
+                location.href = `/issueapp`
+            })
         },
         remove() {
             if (!confirm('이슈를 삭제하시겠습니까?')) {
                 return
             }
-            this.$props.issue.id
+
+            let accessToken = localStorage.getItem('token')
+            window.axios.delete(`/api/v1/issues/${this.issue.id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                }
+            ).then(response => {
+                location.href = `/issueapp`
+            })
         },
-        editComment(id) {
-            this.editCommentId = id
+        showEditComment(comment) {
+            this.editCommentId = comment.id
         },
-        deleteComment(id) {
+        editComment(comment) {
+            let accessToken = localStorage.getItem('token')
+            window.axios.put(`/api/v1/issues/${this.issue.id}/comments/${comment.id}`,
+                {body: comment.body},
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                }
+            ).then(response => {
+                this.editCommentId = 0
+            })
+        },
+        deleteComment(comment) {
             if (!confirm('삭제하시겠습니까?')) {
                 return
             }
+            let accessToken = localStorage.getItem('token')
+            window.axios.delete(`/api/v1/issues/${this.issue.id}/comments/${comment.id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                }
+            ).then(response => {
+                this.issue.comments = this.issue.comments.filter(_comment => {
+                    return _comment.id !== comment.id
+                })
+            })
         },
-        createComment() {
-            console.log(this.newComment)
+        createComment(event) {
+            event.preventDefault() && event.stopPropagation()
+            let accessToken = localStorage.getItem('token')
+            window.axios.post(`/api/v1/issues/${this.issue.id}/comments`,
+                {body: this.newComment},
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                }
+            ).then(response => {
+                this.newComment = ''
+                this.issue.comments.push(response.data)
+            })
         }
     }
 }

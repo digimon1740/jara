@@ -7,17 +7,14 @@ const IssueList = {
                         <q-card @click="clickIssue(issue.id)" class="my-card cursor-pointer " v-for="issue in $props.issues"  v-ripple>
                             <q-card-section  v-if="issue.priority === 'HIGH'" class="bg-red-8 text-white">                          
                                 <div class="text-h6">{{issue.summary}}</div>
-                                <div class="text-subtitle2">by {{issue.reporter}}</div>
                             </q-card-section>
                             
                             <q-card-section v-if="issue.priority === 'MEDIUM'" class="bg-orange-4 text-white">
                                 <div class="text-h6">{{issue.summary}}</div>
-                                <div class="text-subtitle2">by {{issue.reporter}}</div>
                             </q-card-section>
                             
                             <q-card-section  v-if="issue.priority === 'LOW'" class="bg-green-4 text-white">
                                 <div class="text-h6">{{issue.summary}}</div>
-                                <div class="text-subtitle2">by {{issue.reporter}}</div>
                             </q-card-section>
                             
                     

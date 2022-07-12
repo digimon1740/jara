@@ -3,7 +3,8 @@ const UserEditForm = {
   <q-dialog>
 
       <q-card style="width: 700px; max-width: 80vw;">
-        <q-form @sumit="onSubmit" action="http://localhost:8080/users/1" method="post" enctype="multipart/form-data">
+<!--        <q-form @sumit="onSubmit" v-bind:action="url" method="post" enctype="multipart/form-data">-->
+        <q-form @submit.prevent="onSubmit">
             <q-card-section>
                 <div>
                     <span class="text-h6">이름</span>
@@ -18,7 +19,7 @@ const UserEditForm = {
                     <span class="text-h6">프로필 이미지</span>
                     
                       <q-file
-                        name="avatarUrl"
+                        name="profileUrl"
                         v-model="file"
                         label="Pick files"
                         filled
@@ -27,7 +28,7 @@ const UserEditForm = {
                         >
                             <template v-slot:prepend>
                              <q-avatar >
-                                <img :src="user.avatarUrl">
+                                <img :src="user.profileUrl">
                                 </q-avatar>
                             </template>
                         </q-file>
@@ -36,7 +37,7 @@ const UserEditForm = {
            
             <q-card-actions align="right" class="bg-white text-teal">
               <q-btn flat label="저장" type="submit"  />
-              <q-btn flat label="취소" />
+              <q-btn flat label="취소" v-close-popup/>
             </q-card-actions>
             
                   
@@ -50,15 +51,30 @@ const UserEditForm = {
         'typeLabel'
     ],
     data() {
-        return {
-            file: null,
-            url : 'http://localhost:8080/users/' + this.$props.user.id,
-
-        }
+        return {}
     },
 
     methods: {
+
         onSubmit(event) {
-        },
+            let accessToken = localStorage.getItem('token')
+            let url = localStorage.getItem('userServiceUrl')
+
+            let formData = new FormData(event.target);
+
+            window.axios.post(`${url}/api/v1/users/${this.$props.user.id}`, formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                }
+            )
+                .then(response => {
+                    alert('success')
+                    // commit("createEvents", response.data);
+                })
+                .catch(err => err.data);
+        }
     }
 }

@@ -5,7 +5,7 @@ const MyLayout = {
             <q-toolbar-title>
               JARA
             </q-toolbar-title>
-          <q-btn-dropdown stretch flat :label="layoutLabel.userName + layoutLabel.userNameSuffix">
+          <q-btn-dropdown stretch flat :label="user.username + layoutLabel.userNameSuffix">
                 <q-list>
                   <q-item-label header>{{$props.layoutLabel.myInfo}}</q-item-label>
                   <q-item clickable v-close-popup  @click="showUserEditForm()">
@@ -16,7 +16,7 @@ const MyLayout = {
                       <q-item-label>{{$props.layoutLabel.userEdit}}</q-item-label> 
                     </q-item-section>
                   </q-item>
-                  <q-item clickable v-close-popup>
+                  <q-item clickable v-close-popup  @click="logout()">
                     <q-item-section avatar>
                       <q-avatar icon="logout" color="primary" text-color="white" />
                     </q-item-section>
@@ -30,9 +30,9 @@ const MyLayout = {
           </q-toolbar>
           
             <q-tabs align="center" class="bg-white text-primary">
-                <q-tab :label="layoutLabel.todo" icon="task"/>
-                <q-tab :label="layoutLabel.inProgress" icon="schedule"/>
-                <q-tab :label="layoutLabel.resolved" icon="check_circle"/>
+                <q-tab :label="layoutLabel.todo" @click="fetchIssues('TODO')" icon="task"/>
+                <q-tab :label="layoutLabel.inProgress" @click="fetchIssues('IN_PROGRESS')"  icon="schedule"/>
+                <q-tab :label="layoutLabel.resolved" @click="fetchIssues('RESOLVED')" icon="check_circle"/>
             </q-tabs>
         </q-header>
         <-- end top header toolbar -->
@@ -77,6 +77,7 @@ const MyLayout = {
             v-model="issueFormShowed"
             :user="user"
             :issue="clickedIssue"
+            :reporter="reporter"
            :type-label="typeLabel"
             />
         <!-- end issue-edit-form -->
@@ -101,32 +102,99 @@ const MyLayout = {
             issueFormShowed: false,
             userEditFormShowed: false,
             clickedIssue: 0,
+            issues: [],
+            user: null,
+            reporter: '',
         }
     },
+    mounted() {
+        this.fetchUser()
+        this.fetchIssues()
+    },
     methods: {
+        fetchIssues(_status) {
+            let status = _status || 'TODO'
+            let accessToken = localStorage.getItem('token')
+            window.axios.get(`/api/v1/issues?status=${status}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            }).then(response => {
+                this.issues = response.data
+            })
+        },
+        fetchUser() {
+            let accessToken = localStorage.getItem('token')
+            let url = localStorage.getItem('userServiceUrl')
+            window.axios.get(`${url}/api/v1/users/me`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            }).then(response => {
+                if (!response.data) {
+                    location.href = '/'
+                }
+                if (response.data && response.data.code) {
+                    alert(response.data.message)
+                    location.href = '/'
+                }
+                this.user = response.data
+            }).catch(err => {
+                location.href = '/'
+            })
+        },
         showWriteForm() {
             this.issueWriteFormShowed = true
-
         },
         showUserEditForm() {
             this.userEditFormShowed = true
-            console.log(11)
         },
         clickIssue(id) {
             this.issueFormShowed = true
-            this.clickedIssue = this.$props.issues.find(issue => {
+            this.clickedIssue = this.issues.find(issue => {
                 return issue.id === id
             })
-        },
-        hello() {
-            axios.get('/hello')
-                .then(response => {
-                    console.log('hello!')
-                })
-                .catch(error => {
-                    console.log('catch!')
-                })
 
+            this.fetchReporter(this.clickedIssue)
+        },
+        fetchReporter(issue) {
+            let accessToken = localStorage.getItem('token')
+            let url = localStorage.getItem('userServiceUrl')
+            window.axios.get(`${url}/api/v1/users/${issue.userId}/username`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                }
+            ).then(response => {
+                if (!response.data) {
+                    alert('오류가 발생했습니다')
+                    return
+                }
+                if (response.data && response.data.code) {
+                    alert(response.data.message)
+                    return
+                }
+                this.reporter = response.data.reporter
+            })
+        },
+        logout() {
+            let accessToken = localStorage.getItem('token')
+            let url = localStorage.getItem('userServiceUrl')
+            window.axios.delete(`${url}/api/v1/users/logout`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                }
+            ).then(response => {
+                if (response.data && response.data.code) {
+                    alert(response.data.message)
+                    return
+                }
+                location.href = '/'
+            })
         }
+
     }
 }
