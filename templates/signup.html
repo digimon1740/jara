@@ -155,10 +155,6 @@
             password: password,
             username: username,
         }).then(response => {
-            if (!response.data) {
-                alert('오류가 발생했습니다')
-                return
-            }
             if (response.data && response.data.code) {
                 alert(response.data.message)
                 return
