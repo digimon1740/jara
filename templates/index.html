@@ -124,7 +124,6 @@
             }
 
             localStorage.setItem('token', response.data.token)
-            localStorage.setItem('refreshToken', response.data.refreshToken)
 
             location.href = '/issueapp'
         }).catch(error => {
