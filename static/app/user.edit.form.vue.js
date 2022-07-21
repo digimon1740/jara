@@ -54,8 +54,14 @@ const UserEditForm = {
         return {}
     },
 
-    methods: {
+    mounted() {
+        this.getProfileUrl()
+    },
 
+    methods: {
+        getProfileUrl() {
+
+        },
         onSubmit(event) {
             let accessToken = localStorage.getItem('token')
             let url = localStorage.getItem('userServiceUrl')
@@ -71,8 +77,7 @@ const UserEditForm = {
                 }
             )
                 .then(response => {
-                    alert('success')
-                    // commit("createEvents", response.data);
+                    location.reload()
                 })
                 .catch(err => err.data);
         }

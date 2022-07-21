@@ -5,7 +5,9 @@ const MyLayout = {
             <q-toolbar-title>
               JARA
             </q-toolbar-title>
-          <q-btn-dropdown stretch flat :label="user.username + layoutLabel.userNameSuffix">
+          <q-btn-dropdown stretch flat 
+          :icon="profileUrl"
+          :label="user.username + layoutLabel.userNameSuffix">
                 <q-list>
                   <q-item-label header>{{$props.layoutLabel.myInfo}}</q-item-label>
                   <q-item clickable v-close-popup  @click="showUserEditForm()">
@@ -105,6 +107,7 @@ const MyLayout = {
             issues: [],
             user: null,
             reporter: '',
+            profileUrl: 'account_circle',
         }
     },
     mounted() {
@@ -139,6 +142,9 @@ const MyLayout = {
                     location.href = '/'
                 }
                 this.user = response.data
+                if (this.user.profileUrl && this.user.profileUrl.indexOf("null") === -1) {
+                    this.profileUrl = `img:${this.user.profileUrl}`
+                }
             }).catch(err => {
                 location.href = '/'
             })

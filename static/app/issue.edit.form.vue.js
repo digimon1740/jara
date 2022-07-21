@@ -174,6 +174,9 @@ const IssueEditForm = {
             this.editCommentId = comment.id
         },
         editComment(comment) {
+            if (!this.newComment) {
+                return
+            }
             let accessToken = localStorage.getItem('token')
             window.axios.put(`/api/v1/issues/${this.issue.id}/comments/${comment.id}`,
                 {body: comment.body},
@@ -205,6 +208,9 @@ const IssueEditForm = {
         },
         createComment(event) {
             event.preventDefault() && event.stopPropagation()
+            if (!this.newComment) {
+                return
+            }
             let accessToken = localStorage.getItem('token')
             window.axios.post(`/api/v1/issues/${this.issue.id}/comments`,
                 {body: this.newComment},
