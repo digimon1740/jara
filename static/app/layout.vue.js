@@ -118,6 +118,9 @@ const MyLayout = {
         fetchIssues(_status) {
             let status = _status || 'TODO'
             let accessToken = localStorage.getItem('token')
+            if (!accessToken) {
+                return
+            }
             window.axios.get(`/api/v1/issues?status=${status}`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
@@ -128,6 +131,9 @@ const MyLayout = {
         },
         fetchUser() {
             let accessToken = localStorage.getItem('token')
+            if (!accessToken) {
+                return
+            }
             let url = localStorage.getItem('userServiceUrl')
             window.axios.get(`${url}/api/v1/users/me`, {
                 headers: {
